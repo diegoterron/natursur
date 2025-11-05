@@ -28,7 +28,7 @@ export default function Dashboard({ session, onLogout }) {
         {appointmentTypes.map((type) => (
           <li key={type.id}>
             <Link to={`/appointment-type/${type.id}`}>
-              {type.name} – {type.duration_minutes} min
+              {type.name}
             </Link>
           </li>
         ))}
