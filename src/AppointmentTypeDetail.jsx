@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { calculateAvailableSlots } from './api/weeklySlots'
 import { getAppointmentTypeById, getTariffsByAppointmentType, getAvailableStaffForType } from './api/appointmentTypes'
 import { createAppointment } from './api/appointments'
+import { supabase } from './api/supabaseClient'
 
 export default function AppointmentTypeDetail() {
   const { typeId } = useParams()
@@ -68,10 +69,15 @@ export default function AppointmentTypeDetail() {
 
   const handleReserve = async (slot) => {
     try {
+      const {
+        data: { user }
+      } = await supabase.auth.getUser()
+
       await createAppointment({
         appointment_type_id: typeId,
         tariff_id: selectedTariff.id,
-        staff_id: selectedStaff.id,
+        staffId: selectedStaff.id,
+        userId: user?.id,
         start_at: slot.start_at,
         end_at: slot.end_at
       })
@@ -110,11 +116,10 @@ export default function AppointmentTypeDetail() {
             <p className="mt-1 text-sm text-slate-600">{appointmentType.description}</p>
           )}
         </div>
-
-        
       </div>
 
       <div className="grid grid-cols-1 gap-6 md:grid-cols-2">
+        {/* Sección de masajistas */}
         <section className="bg-white border border-emerald-100 rounded-2xl p-5 shadow-sm">
           <h2 className="text-lg font-medium text-emerald-700 mb-3">Selecciona un masajista</h2>
 
@@ -128,7 +133,7 @@ export default function AppointmentTypeDetail() {
                 >
                   <div className="flex items-center gap-3">
                     <div className="w-10 h-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-700 font-semibold">
-                      {staff.full_name.split(' ').map(n => n[0]).slice(0,2).join('')}
+                      {staff.full_name.split(' ').map(n => n[0]).slice(0, 2).join('')}
                     </div>
                     <div>
                       <div className="font-medium text-slate-800">{staff.full_name}</div>
@@ -158,6 +163,7 @@ export default function AppointmentTypeDetail() {
           )}
         </section>
 
+        {/* Sección de tarifas */}
         <section className="bg-white border border-sky-50 rounded-2xl p-5 shadow-sm">
           <h2 className="text-lg font-medium text-sky-700 mb-3">Selecciona una tarifa</h2>
 
@@ -179,7 +185,7 @@ export default function AppointmentTypeDetail() {
                   </div>
 
                   <div className="text-right">
-                    <div className="font-medium text-slate-800">{t.price_cents ? `${(t.price_cents/100).toFixed(2)}€` : 'Gratis'}</div>
+                    <div className="font-medium text-slate-800">{t.price_cents ? `${(t.price_cents / 100).toFixed(2)}€` : 'Gratis'}</div>
                     <input
                       className="sr-only"
                       type="radio"
@@ -200,6 +206,7 @@ export default function AppointmentTypeDetail() {
         </section>
       </div>
 
+      {/* Fecha y slots */}
       {selectedTariff && (
         <div className="mt-6 bg-white border border-emerald-50 rounded-2xl p-5 shadow-sm">
           <div className="flex flex-col md:flex-row md:items-end md:gap-4 gap-3">
@@ -232,21 +239,40 @@ export default function AppointmentTypeDetail() {
             </div>
           </div>
 
+          {/* Slots disponibles */}
           <div className="mt-4">
             {availableSlots.length > 0 ? (
               <ul className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                 {availableSlots.map(slot => (
-                  <li key={`${slot.start_at}-${slot.end_at}`} className="flex items-center justify-between p-3 rounded-lg bg-gradient-to-r from-white to-sky-50 border border-sky-100">
+                  <li
+                    key={`${slot.slot_id}-${slot.start_at}`}
+                    className={`flex items-center justify-between p-3 rounded-lg border ${
+                      slot.is_booked
+                        ? 'bg-red-50 border-red-200 opacity-60'
+                        : 'bg-gradient-to-r from-white to-sky-50 border-sky-100'
+                    }`}
+                  >
                     <div>
                       <div className="font-medium text-slate-800">{formatTimeRange(slot)}</div>
-                      {slot.extra && <div className="text-xs text-slate-500">{slot.extra}</div>}
+                      {slot.is_booked && (
+                        <div className="text-xs text-red-500 font-medium">Ocupado</div>
+                      )}
                     </div>
-                    <button
-                      onClick={() => handleReserve(slot)}
-                      className="btn-soft ml-4 inline-flex items-center px-3 py-1.5 rounded-md bg-gray-100 text-slate-700 hover:bg-gray-200"
-                    >
-                      Reservar
-                    </button>
+                    {!slot.is_booked ? (
+                      <button
+                        onClick={() => handleReserve(slot)}
+                        className="btn-soft ml-4 inline-flex items-center px-3 py-1.5 rounded-md bg-gray-100 text-slate-700 hover:bg-gray-200"
+                      >
+                        Reservar
+                      </button>
+                    ) : (
+                      <button
+                        disabled
+                        className="btn-soft ml-4 inline-flex items-center px-3 py-1.5 rounded-md bg-gray-200 text-slate-400 cursor-not-allowed"
+                      >
+                        No disponible
+                      </button>
+                    )}
                   </li>
                 ))}
               </ul>
