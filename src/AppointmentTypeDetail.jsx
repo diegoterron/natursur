@@ -93,8 +93,8 @@ export default function AppointmentTypeDetail() {
   )
 
   return (
-    <div className="max-w-3xl mx-auto p-6 md:p-10">
-      <div className="flex items-center gap-4 mb-6">
+    <div className="max-w-3xl mx-auto p-6 md:p-10 bg-white border border-emerald-100 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.15)] p-8">
+      <div className="flex items-center gap-4 mb-6 ">
         <button
           onClick={() => navigate(-1)}
           className="btn-soft inline-flex items-center gap-2 px-3 py-1.5 rounded-md border border-gray-200 bg-gray-100 hover:bg-gray-200 shadow-sm text-slate-700"

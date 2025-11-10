@@ -3,6 +3,7 @@ import { useState, useEffect } from 'react'
 import { createClient } from '@supabase/supabase-js'
 import Dashboard from './Dashboard'
 import AppointmentTypeDetail from './AppointmentTypeDetail'
+import MyAppointments from './MyAppointments'
 
 const supabase = createClient(
   import.meta.env.VITE_SUPABASE_URL,
@@ -54,43 +55,83 @@ export default function App() {
 
   if (!session) {
     return (
-      <div style={{ maxWidth: 400, margin: 'auto' }}>
-        <h2>Login o Registro</h2>
-        
-        {errorMessage && <p style={{ color: 'red' }}>{errorMessage}</p>}
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="w-full max-w-md bg-white border border-emerald-100 rounded-2xl shadow-[0_0_20px_rgba(16,185,129,0.15)] p-8">
+          <h2 className="text-2xl font-semibold text-center text-sky-900 mb-6">
+            Inicia sesión o regístrate
+          </h2>
 
-        <form onSubmit={handleLogin}>
-          <input
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            required
-            style={{ width: '100%', margin: '8px 0', padding: '8px' }}
-          />
-          <input
-            type="password"
-            placeholder="Contraseña"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            required
-            style={{ width: '100%', margin: '8px 0', padding: '8px' }}
-          />
+          {errorMessage && (
+            <p className="text-red-600 text-sm mb-4 text-center">
+              {errorMessage}
+            </p>
+          )}
 
-          <button type="submit" disabled={loading}>
-            {loading ? 'Cargando...' : 'Iniciar sesión'}
+          <form onSubmit={handleLogin} className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Email
+              </label>
+              <input
+                type="email"
+                placeholder="tu@email.com"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                required
+                className="w-full px-3 py-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-sky-200"
+              />
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-slate-700 mb-1">
+                Contraseña
+              </label>
+              <input
+                type="password"
+                placeholder="••••••••"
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                required
+                className="w-full px-3 py-2 border border-slate-200 rounded-md focus:outline-none focus:ring-2 focus:ring-emerald-200"
+              />
+            </div>
+
+            <button
+              type="submit"
+              disabled={loading}
+              className={`w-full py-2 rounded-md font-medium shadow-sm transition ${
+                loading
+                  ? 'bg-gray-200 text-slate-500 cursor-not-allowed'
+                  : 'bg-emerald-100 text-emerald-800 hover:bg-emerald-200'
+              }`}
+            >
+              {loading ? 'Cargando…' : 'Iniciar sesión'}
+            </button>
+          </form>
+
+          <div className="mt-6 flex items-center justify-center">
+            <hr className="flex-1 border-slate-200" />
+            <span className="mx-3 text-slate-400 text-sm">o</span>
+            <hr className="flex-1 border-slate-200" />
+          </div>
+
+          <button
+            onClick={handleSignUp}
+            disabled={loading}
+            className="mt-6 w-full py-2 rounded-md border border-sky-100 bg-sky-50 text-sky-700 hover:bg-sky-100 shadow-sm font-medium transition"
+          >
+            Registrarse
           </button>
-        </form>
 
-        <hr />
-        <button onClick={handleSignUp} disabled={loading}>
-          Registrarse
-        </button>
+          <footer className="mt-8 text-center text-xs text-slate-400">
+            © 2025 Fernando Escalona
+          </footer>
+        </div>
       </div>
     )
   }
 
-    return (
+  return (
     <div className="app-container">
       <div className="min-h-screen bg-gray-50 flex justify-center items-center">
         <div className="w-full max-w-6xl p-4 md:p-8">
@@ -103,9 +144,17 @@ export default function App() {
               path="/appointment-type/:typeId"
               element={<AppointmentTypeDetail />}
             />
+            <Route
+              path="/my-appointments"
+              element={<MyAppointments session={session} />}
+            />
           </Routes>
         </div>
       </div>
     </div>
   )
 }
+
+
+
+
