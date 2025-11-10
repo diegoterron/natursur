@@ -87,7 +87,7 @@ export default function Dashboard({ session, onLogout }) {
           )}
         </div>
 
-        <footer className="mt-10 text-center text-xs text-slate-400">© 2025 Fernando Escalona</footer>
+        <footer className="mt-10 text-center text-xs text-slate-400">© 2025 Natursur</footer>
       </div>
     </div>
   )

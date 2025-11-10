@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { getUserAppointments, cancelAppointment } from './api/appointments'
+import { getAppointmentsByUser, cancelAppointment } from './api/appointments'
 
 export default function MyAppointments({ session }) {
   const [appointments, setAppointments] = useState([])
@@ -12,7 +12,7 @@ export default function MyAppointments({ session }) {
     const loadAppointments = async () => {
       try {
         setLoading(true)
-        const data = await getUserAppointments(session.user.id)
+        const data = await getAppointmentsByUser(session.user.id)
         setAppointments(data)
       } catch (error) {
         console.error('Error cargando citas:', error.message)
@@ -118,7 +118,7 @@ export default function MyAppointments({ session }) {
       )}
 
       <footer className="mt-10 text-center text-xs text-slate-400">
-        © 2025 Fernando Escalona
+        © 2025 Natursur
       </footer>
     </div>
   )

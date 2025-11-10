@@ -393,7 +393,7 @@ export default function AppointmentTypeDetail() {
       )}
 
       <footer className="mt-6 text-center text-xs text-slate-400">
-        <div>© 2025 Fernando Escalona</div>
+        <div>© 2025 Natursur</div>
       </footer>
     </div>
   )
